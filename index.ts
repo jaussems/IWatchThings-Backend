@@ -10,6 +10,18 @@ mongoose.connect(uri)
 const db = mongoose.connection;
 const app: Express = express();
 const PORT = process.env.PORT || 4000;
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerOptions = {
+    swaggerDefinition: {
+        info: {
+            title: 'IWatchThings API',
+            description: "A REST API built with Express and MongoDB. This API is build to interact with the MongoDB database and save the users preference."
+        },
+    },
+    apis: ["./src/routes/signup.ts"]
+}
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -20,6 +32,7 @@ app.get('/test', (req: Request,res: Response) => {
     })
 })
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use(signUpRouter);
 
 app.listen(PORT, () => {
