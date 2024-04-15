@@ -23,7 +23,19 @@ const transporter = nodemailer.createTransport({
 
 type RequestBody<T> = Request<{}, {}, T>;
 
-
+/**
+ * @swagger
+ * /catchphrases:
+ *   get:
+ *     description: Signing up user
+ *     responses:
+ *       200:
+ *         description: Returns all the catachphrases
+ *       401:
+ *         description: Returns when the user updates with missing data.
+ *       200:
+ *         description: Returns all the catachphrases
+ */
 signUpRouter.post("/signup", async (request: RequestBody<SignUp>, response: Response) => {
     const {username, password, confirmPassword} = request.body
 
