@@ -20,11 +20,11 @@ app.use(bodyParser.json());
 const swaggerOptions = {
     swaggerDefinition: {
         info: {
-            title: 'Catchphrases REST API',
+            title: 'IWatchThings API',
             description: "A REST API built with Express and MongoDB. This API is build to interact with the MongoDB database and save the users preference."
         },
     },
-    apis: ["./signup/signup.js"]
+    apis: ["./src/routes/signup.ts"]
 }
 
 app.get('/test', (req: Request,res: Response) => {
