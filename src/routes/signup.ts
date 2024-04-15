@@ -9,10 +9,12 @@ type RequestBody<T> = Request<{}, {}, T>;
 
 
 signUpRouter.post("/signup", (request: RequestBody<SignUp>, response: Response) => {
-    if(!request.body.username || !request.body.password || !request.body.confirmPassword )
+    const {username, password, confirmPassword} = request.body
+
+    if(!username || !password || !confirmPassword )
     {
         response.status(401).send({
-        message: "Please fill in your details "   
+        message: "Please fill in your details, you are either missing y"   
         })
     }
     else 
