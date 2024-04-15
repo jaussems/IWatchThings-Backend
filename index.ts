@@ -12,11 +12,6 @@ const app: Express = express();
 const PORT = process.env.PORT || 4000;
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsDoc = require('swagger-jsdoc');
-
-
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
-
 const swaggerOptions = {
     swaggerDefinition: {
         info: {
@@ -26,6 +21,10 @@ const swaggerOptions = {
     },
     apis: ["./src/routes/signup.ts"]
 }
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
 
 app.get('/test', (req: Request,res: Response) => {
     res.status(200).send({
@@ -33,11 +32,7 @@ app.get('/test', (req: Request,res: Response) => {
     })
 })
 
-const swaggerDocs = swaggerJsDoc(swaggerOptions);
-
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-
-
 app.use(signUpRouter);
 
 app.listen(PORT, () => {
