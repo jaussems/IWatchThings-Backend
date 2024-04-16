@@ -5,16 +5,34 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const UserSchema = new Schema({
+export interface User {
+    _id:      string;
+    email:    string;
+    password: string;
+    otp:      number;
+    verified: Verified;
+}
+
+export interface Verified {
+    verified: boolean;
+    required: boolean;
+    default:  boolean;
+}
+
+const UserSchema = new Schema<User>({
     _id: mongoose.Schema.Types.ObjectId,
-    username: String,
+    email: String,
     password: String,
+    otp: Number,
     verified: {
         verified: Boolean,
         required: Boolean,
         default:Boolean
     }
 });
+
+
+
 
 UserSchema.methods.generateVerificationtoken = function () {
     const user = this;
