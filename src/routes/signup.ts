@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { SignUp } from "../models/signup";
 import { MongoClient } from "mongodb";
+import { insertNewUserIntoCollection } from "../services/database";
 
 
 const express = require("express");
@@ -42,8 +43,8 @@ type RequestBody<T> = Request<{}, {}, T>;
  *         description: Returns when the user updates with missing data.
  */
 signUpRouter.post("/signup", async (request: RequestBody<SignUp>, response: Response) => {
-    const database = client.db("IwatchMovies");
-    const collection = database.collection("users");
+    //const database = client.db("IwatchMovies");
+  //  const collection = database.collection("users");
 
     const {email, password, confirmPassword} = request.body
 
@@ -75,7 +76,8 @@ signUpRouter.post("/signup", async (request: RequestBody<SignUp>, response: Resp
             }
         })
 
-        collection.insertOne(user);
+     //   collection.insertOne(user);
+        insertNewUserIntoCollection(user)
 
         const verificationToken = user.generateVerificationtoken();
         const url = `http://localhost:3000/api/verify/${verificationToken}`
