@@ -1,24 +1,17 @@
 import { Request, Response } from "express";
 import { SignUp } from "../models/signup";
-import { MongoClient } from "mongodb";
 import { insertNewUserIntoCollection } from "../services/database";
-
 
 const express = require("express");
 const { Router } = express;
 export const signUpRouter = new Router();
-const mongoose = require('mongoose');
 const nodemailer = require('nodemailer');
-const dotenv = require('dotenv');
 const {randomInt} = require('crypto')
-dotenv.config();
-
-const uri = `mongodb+srv://${process.env["USERNAME"]}:${process.env["PASSWORD"]}@${process.env["MONGODBURL"]}`;
-mongoose.connect(uri)
-const db = mongoose.connection;
-const client = new MongoClient(uri);
-
+const dotenv = require('dotenv').config();
+const mongoose = require('mongoose');
 const User = require("../models/user.js");
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
@@ -43,9 +36,6 @@ type RequestBody<T> = Request<{}, {}, T>;
  *         description: Returns when the user updates with missing data.
  */
 signUpRouter.post("/signup", async (request: RequestBody<SignUp>, response: Response) => {
-    //const database = client.db("IwatchMovies");
-  //  const collection = database.collection("users");
-
     const {email, password, confirmPassword} = request.body
 
     if(!email || !password || !confirmPassword )
@@ -58,17 +48,18 @@ signUpRouter.post("/signup", async (request: RequestBody<SignUp>, response: Resp
     const otp =  randomInt(100000, 999999);
 
     try {
-        const existingUser = await User.findOne({ email }).exec();
-        if(existingUser){
-        return response.status(409).send({
-            message: "Email is already in use."
-        })
-        }
-
-        const user = await new User({
+        //TODO: Fix existing user query
+        // const existingUser = findExistingUser(email)
+        // if(existingUser){
+        // return response.status(409).send({
+        //     message: "Email is already in use."
+        // })
+        // }
+        let user = await new User({
             _id: new mongoose.Types.ObjectId,
             email: email,
             password: password,
+            otp: otp,
             verified: {
                 verified: false,
                 required: true,
@@ -76,16 +67,30 @@ signUpRouter.post("/signup", async (request: RequestBody<SignUp>, response: Resp
             }
         })
 
-     //   collection.insertOne(user);
+        bcrypt.hash(password, saltRounds, async (err: Error, hash: string) => {
+            if (err) {
+                console.error(err);
+                return;
+            }
+            user.password = hash;
+        });
+
         insertNewUserIntoCollection(user)
 
         const verificationToken = user.generateVerificationtoken();
-        const url = `http://localhost:3000/api/verify/${verificationToken}`
+        const url = `http://localhost:3000/api/verify/${verificationToken}`;
 
         transporter.sendMail({
             to: email,
             subject: 'Verify Account',
             html: `Click <a href = '${url}'>here</a> to confirm your email.`
+        })
+
+        // needs to be moved in future when user verifies mail and proceeds to step 2
+        transporter.sendMail({
+            to: email,
+            subject: 'Verification Number IWatchThings',
+            html: `Your verification number is : ${otp}`
         })
         return response.status(201).send({
             message: `Sent a verification email to ${email}`
@@ -95,7 +100,6 @@ signUpRouter.post("/signup", async (request: RequestBody<SignUp>, response: Resp
     {
         return response.status(500).send(error);
     }
-   
 })
 
 signUpRouter.post("/sendotp", async (request: Request, response: Response) => {

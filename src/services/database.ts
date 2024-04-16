@@ -14,3 +14,12 @@ const collection = database.collection("users");
 export function insertNewUserIntoCollection (user: Schema<User>) {
     collection.insertOne(user);
 }
+
+export function findExistingUser(email: String): any {
+    const existingUser = collection.find({
+       email: email
+    })
+
+    console.log(`existingUser : ${existingUser}`)
+    return existingUser;
+}

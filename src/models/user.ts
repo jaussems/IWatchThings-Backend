@@ -9,6 +9,7 @@ export interface User {
     _id:      string;
     email:    string;
     password: string;
+    otp:      number;
     verified: Verified;
 }
 
@@ -22,6 +23,7 @@ const UserSchema = new Schema<User>({
     _id: mongoose.Schema.Types.ObjectId,
     email: String,
     password: String,
+    otp: Number,
     verified: {
         verified: Boolean,
         required: Boolean,
