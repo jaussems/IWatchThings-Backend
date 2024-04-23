@@ -102,6 +102,17 @@ signUpRouter.post("/signup", async (request: RequestBody<SignUp>, response: Resp
     }
 })
 
+/**
+ * @swagger
+ * /sendotp:
+ *   post:
+ *     description: Sending verification code to user
+ *     responses:
+ *       201:
+ *         description: Successfully send verification code to your email.
+ *       401:
+ *         description: Sends Error
+ */
 signUpRouter.post("/sendotp", async (request: Request, response: Response) => {
     const otp =  randomInt(100000, 999999);
     try {
@@ -115,9 +126,46 @@ signUpRouter.post("/sendotp", async (request: Request, response: Response) => {
         subject: 'Verify Account',
         html: `Your verification mail is : ${otp}`
     })
+        return response.status(201).send({
+            message: "Successfully send verification code to your email."
+        })
 
     }
     catch(error) {
         return response.status(500).send(error);
     }
+})
+
+/**
+ * @swagger
+ * /sendotp:
+ *   put:
+ *     description: Resending verification code to user
+ *     responses:
+ *       201:
+ *         description: Successfully resend verification code to your email.
+ *       401:
+ *         description: Sends Error
+ */
+signUpRouter.put('/sendotp', async (request: Request, response: Response) => {
+    const otp =  randomInt(100000, 999999);
+    try {
+        const user = await User.findOneAndUpdate(
+            {otp, otpExpiration: Date.now() + 60000},
+            {expired: false}
+        )
+        transporter.sendMail({
+            to: user.username,
+            subject: 'Verify Account',
+            html: `Your verification mail is : ${otp}`
+        })
+        return response.status(201).send({
+            message: "Successfully resend verification code to your email."
+        })
+    }
+    catch(error)
+    {
+        return response.status(500).send(error);
+    }
+
 })

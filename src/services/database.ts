@@ -15,6 +15,8 @@ export function insertNewUserIntoCollection (user: Schema<User>) {
     collection.insertOne(user);
 }
 
+
+
 export function findExistingUser(email: String): any {
     const existingUser = collection.find({
        email: email
