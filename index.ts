@@ -12,6 +12,10 @@ const app: Express = express();
 const PORT = process.env.PORT || 4000;
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsDoc = require('swagger-jsdoc');
+const cors = require('cors');
+
+
+app.use(cors());
 const swaggerOptions = {
     swaggerDefinition: {
         info: {

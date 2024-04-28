@@ -1,15 +1,14 @@
 import { Request, Response } from "express";
 import { SignUp } from "../models/signup";
-import { insertNewUserIntoCollection } from "../services/database";
+import {insertNewUserIntoCollection, usercollection} from "../services/database";
 
 const express = require("express");
 const { Router } = express;
 export const signUpRouter = new Router();
 const nodemailer = require('nodemailer');
 const {randomInt} = require('crypto')
-const dotenv = require('dotenv').config();
 const mongoose = require('mongoose');
-const User = require("../models/user.js");
+import {UserSchema, User} from "../models/user";
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
@@ -48,13 +47,12 @@ signUpRouter.post("/signup", async (request: RequestBody<SignUp>, response: Resp
     const otp =  randomInt(100000, 999999);
 
     try {
-        //TODO: Fix existing user query
-        // const existingUser = findExistingUser(email)
-        // if(existingUser){
-        // return response.status(409).send({
-        //     message: "Email is already in use."
-        // })
-        // }
+        const existingUser = await usercollection.findOne({email: email});
+        if(existingUser){
+        return response.status(409).send({
+            message: "Email is already in use."
+        })
+        }
         let user = await new User({
             _id: new mongoose.Types.ObjectId,
             email: email,
@@ -75,9 +73,9 @@ signUpRouter.post("/signup", async (request: RequestBody<SignUp>, response: Resp
             user.password = hash;
         });
 
-        insertNewUserIntoCollection(user)
+        insertNewUserIntoCollection(user);
 
-        const verificationToken = user.generateVerificationtoken();
+        const verificationToken =  UserSchema.methods.generateVerificationtoken();
         const url = `http://localhost:3000/api/verify/${verificationToken}`;
 
         transporter.sendMail({
@@ -114,6 +112,7 @@ signUpRouter.post("/signup", async (request: RequestBody<SignUp>, response: Resp
  *         description: Sends Error
  */
 signUpRouter.post("/sendotp", async (request: Request, response: Response) => {
+    console.log(request.body);
     const otp =  randomInt(100000, 999999);
     try {
     const user = await User.findOneAndUpdate(
@@ -122,7 +121,7 @@ signUpRouter.post("/sendotp", async (request: Request, response: Response) => {
     )
 
     transporter.sendMail({
-        to: user.username,
+        to: user?.email,
         subject: 'Verify Account',
         html: `Your verification mail is : ${otp}`
     })
@@ -155,7 +154,7 @@ signUpRouter.put('/sendotp', async (request: Request, response: Response) => {
             {expired: false}
         )
         transporter.sendMail({
-            to: user.username,
+            to: user?.email,
             subject: 'Verify Account',
             html: `Your verification mail is : ${otp}`
         })
@@ -168,4 +167,46 @@ signUpRouter.put('/sendotp', async (request: Request, response: Response) => {
         return response.status(500).send(error);
     }
 
+})
+
+signUpRouter.post('/verifyOTP', async (request: Request, response: Response) => {
+    try {
+        const update = {
+            verified: {
+                verified: true,
+                required: true,
+                default:false,
+            }
+        };
+        for (const key of Object.keys(request.body)){
+            if (request.body[key] !== '') {
+                // @ts-ignore
+                update[key] = request.body[key];
+            }
+        }
+
+        const user = await usercollection.findOneAndUpdate(
+            {email: request.body.email},
+            {$set: update},
+            {includeResultMetadata: true}
+
+        );
+
+        console.log(`User: ${JSON.stringify(user)}`);
+        if(!user) {
+            return response.status(401).send({
+                message: "User not found."
+            })
+        }
+        else
+            return response.status(201).send({
+                message: `You have been verified!`
+            })
+    }
+    catch(error: any)
+    {
+        return response.status(500).send( {
+            message: `I am not working ${error.message}`
+        });
+    }
 })
