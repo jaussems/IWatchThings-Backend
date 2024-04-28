@@ -186,7 +186,7 @@ signUpRouter.post('/verifyOTP', async (request: Request, response: Response) => 
         }
 
         const user = await usercollection.findOneAndUpdate(
-            {email: request.body.email},
+            {otp: request.body.otp},
             {$set: update},
             {includeResultMetadata: true}
 
@@ -195,7 +195,7 @@ signUpRouter.post('/verifyOTP', async (request: Request, response: Response) => 
         console.log(`User: ${JSON.stringify(user)}`);
         if(!user) {
             return response.status(401).send({
-                message: "User not found."
+                message: "Verification could not be complete, no verification code was found..."
             })
         }
         else
