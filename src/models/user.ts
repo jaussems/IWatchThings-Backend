@@ -1,12 +1,12 @@
-import { Schema } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 dotenv.config();
 
-export interface User {
-    _id:      string;
+export interface IUserData {
+    _id:      Types.ObjectId;
     email:    string;
     password: string;
     otp:      number;
@@ -19,7 +19,7 @@ export interface Verified {
     default:  boolean;
 }
 
-const UserSchema = new Schema<User>({
+export const UserSchema = new Schema<IUserData>({
     _id: mongoose.Schema.Types.ObjectId,
     email: String,
     password: String,
@@ -44,5 +44,8 @@ UserSchema.methods.generateVerificationtoken = function () {
     return verificationToken;
 };
 
-module.exports = mongoose.model("User", UserSchema);
+export const User = model<IUserData>('User', UserSchema);
 
+module.exports = {
+    User,UserSchema
+}
