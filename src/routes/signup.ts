@@ -195,7 +195,7 @@ signUpRouter.post('/verifyOTP', async (request: Request, response: Response) => 
         console.log(`User: ${JSON.stringify(user)}`);
         if(!user) {
             return response.status(401).send({
-                message: "Verification could not be complete, no verification code was found..."
+                message: "Verification could not be completed, no verification code was found..."
             })
         }
         else
