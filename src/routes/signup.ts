@@ -56,7 +56,7 @@ signUpRouter.post("/signup", async (request: RequestBody<SignUp>, response: Resp
         let user = await new User({
             _id: new mongoose.Types.ObjectId,
             email: email,
-            password: password,
+            password: await bcrypt.hash(password, saltRounds),
             otp: otp,
             verified: {
                 verified: false,
@@ -64,14 +64,6 @@ signUpRouter.post("/signup", async (request: RequestBody<SignUp>, response: Resp
                 default: false
             }
         })
-
-        bcrypt.hash(password, saltRounds, async (err: Error, hash: string) => {
-            if (err) {
-                console.error(err);
-                return;
-            }
-            user.password = hash;
-        });
 
         insertNewUserIntoCollection(user);
 

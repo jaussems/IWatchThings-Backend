@@ -1,5 +1,6 @@
 import express, { Express, Request, Response } from "express";
 import {signUpRouter} from "./src/routes/signup";
+import {loginRouter} from "./src/routes/login";
 
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
@@ -36,8 +37,11 @@ app.get('/test', (req: Request,res: Response) => {
     })
 })
 
+
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use(signUpRouter);
+app.use(loginRouter);
 
 app.listen(PORT, () => {
     db.on('error', console.error.bind(console, 'MongoDB connection error:'));
