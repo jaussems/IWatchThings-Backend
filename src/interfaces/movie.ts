@@ -1,5 +1,8 @@
-interface IMovie {
-    id: number;
+import {Types} from "mongoose";
+import {IUserData} from "./user";
+
+export interface IMovie {
+    id: Types.ObjectId;
     adult: boolean;
     backdropPath: string;
     title: string;
@@ -15,4 +18,5 @@ interface IMovie {
     vote_average: number;
     voteCount: number;
     name: string;
+    users: Types.ObjectId[];
 }

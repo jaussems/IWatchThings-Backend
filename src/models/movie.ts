@@ -1,9 +1,11 @@
 import { Schema, model, Types } from "mongoose";
+import {IMovie} from "../interfaces/movie";
+import {IUserData} from "../interfaces/user";
 
 
 
 const movieSchema = new Schema<IMovie>( {
-    id:               Number,
+    id:               [{type : Types.ObjectId, required: true , index: true}],
     adult:            Boolean,
     backdropPath:     String,
     title:            String,
@@ -18,11 +20,17 @@ const movieSchema = new Schema<IMovie>( {
     video:            Boolean,
     vote_average:     Number,
     voteCount:        Number,
-    name:             String
-
+    name:             String,
+    users : [{ type: Schema.Types.ObjectId, ref: 'User' }],
 })
 
 export const Movie = model<IMovie>("Movie", movieSchema);
+
+
+export interface IRequestBodyMovie {
+    userId: Types.ObjectId,
+    movie: IMovie
+}
 
 module.exports = {
     Movie
