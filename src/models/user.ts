@@ -1,29 +1,22 @@
 import { Schema, model, Types } from "mongoose";
+import {IMovie} from "../interfaces/movie";
+import {IUserData} from "../interfaces/user";
 
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 dotenv.config();
 
-export interface IUserData {
-    _id:      Types.ObjectId;
-    email:    string;
-    password: string;
-    otp:      number;
-    verified: Verified;
-}
 
-export interface Verified {
-    verified: boolean;
-    required: boolean;
-    default:  boolean;
-}
+
+
 
 export const UserSchema = new Schema<IUserData>({
     _id: mongoose.Schema.Types.ObjectId,
     email: String,
     password: String,
     otp: Number,
+    movies : [{ type: Schema.Types.ObjectId, ref: 'Movie' }],
     verified: {
         verified: Boolean,
         required: Boolean,
