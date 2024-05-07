@@ -20,10 +20,10 @@ export function insertNewUserIntoCollection (user: IUserData) {
 export async function insertNewMovie(movie: IMovie) {
     try
     {
-        const foundMovie = await database.collection('movies').find({_id: movie.id });
+        const foundMovie = await database.collection('movies').find({_id: movie._id });
         if(!foundMovie)
         {
-            await database.collection('movies').insertOne(movie);
+           // await database.collection('movies').insertOne(movie);
             return response.status(201).send({
                 message: "Movie created and added to collection."
             })
@@ -38,7 +38,7 @@ export async function insertNewMovie(movie: IMovie) {
 export function addRefUserMovie(userId: Types.ObjectId, movie : IMovie) {
    usercollection.findOne({_id: userId}).then((foundUser) => {
         if(foundUser){
-        foundUser.movies = [...foundUser.movies, movie.id]
+        foundUser.movies = [...foundUser.movies, movie._id]
             return response.status(201).send({
                 message: `Reference for movie was added to user ${userId}`,
             })

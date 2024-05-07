@@ -1,12 +1,11 @@
-import {Types} from "mongoose";
-import {IMovie} from "./movie";
+import {Schema, Types} from "mongoose";
 
 export interface IUserData {
     _id:      Types.ObjectId;
     email:    string;
     password: string;
     otp:      number;
-    movies:   Types.ObjectId[];
+    movies:   Schema.Types.ObjectId[];
     verified: Verified;
 }
 
