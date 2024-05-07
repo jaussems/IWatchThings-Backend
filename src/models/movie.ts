@@ -5,7 +5,7 @@ import {IUserData} from "../interfaces/user";
 
 
 const movieSchema = new Schema<IMovie>( {
-    id:               [{type : Types.ObjectId, required: true , index: true}],
+    _id:              Schema.Types.ObjectId,
     adult:            Boolean,
     backdropPath:     String,
     title:            String,
@@ -28,7 +28,7 @@ export const Movie = model<IMovie>("Movie", movieSchema);
 
 
 export interface IRequestBodyMovie {
-    userId: Types.ObjectId,
+    userId: Schema.Types.ObjectId,
     movie: IMovie
 }
 

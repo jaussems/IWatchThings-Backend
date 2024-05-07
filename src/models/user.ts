@@ -16,7 +16,9 @@ export const UserSchema = new Schema<IUserData>({
     email: String,
     password: String,
     otp: Number,
-    movies : [{ type: Schema.Types.ObjectId, ref: 'Movie' }],
+    movies : [
+        { ref: 'Movie', type: Schema.Types.ObjectId  }
+    ],
     verified: {
         verified: Boolean,
         required: Boolean,

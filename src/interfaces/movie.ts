@@ -1,8 +1,7 @@
-import {Types} from "mongoose";
-import {IUserData} from "./user";
+import {Schema, Types} from "mongoose";
 
 export interface IMovie {
-    id: Types.ObjectId;
+    _id: Schema.Types.ObjectId;
     adult: boolean;
     backdropPath: string;
     title: string;
@@ -18,5 +17,5 @@ export interface IMovie {
     vote_average: number;
     voteCount: number;
     name: string;
-    users: Types.ObjectId[];
+    users: Schema.Types.ObjectId[];
 }
