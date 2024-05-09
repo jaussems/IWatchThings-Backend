@@ -1,8 +1,9 @@
-import { MongoClient } from "mongodb";
-import mongoose, {Document, Model, Schema, Types} from 'mongoose';
+import {MongoClient} from "mongodb";
+import mongoose from 'mongoose';
 import {IMovie} from "../interfaces/movie";
 import {response} from "express";
 import {IUserData} from "../interfaces/user";
+
 const dotenv = require('dotenv').config();
 
 
@@ -23,7 +24,8 @@ export async function insertNewMovie(movie: IMovie) {
         const foundMovie = await database.collection('movies').find({_id: movie._id });
         if(!foundMovie)
         {
-           // await database.collection('movies').insertOne(movie);
+
+           await database.collection('movies').insertOne(movie);
             return response.status(201).send({
                 message: "Movie created and added to collection."
             })
@@ -35,22 +37,7 @@ export async function insertNewMovie(movie: IMovie) {
 }
 
 
-export function addRefUserMovie(userId: Types.ObjectId, movie : IMovie) {
-   usercollection.findOne({_id: userId}).then((foundUser) => {
-        if(foundUser){
-        foundUser.movies = [...foundUser.movies, movie._id]
-            return response.status(201).send({
-                message: `Reference for movie was added to user ${userId}`,
-            })
-        }
-        else
-        {
-            return response.status(404).send({
-                message: "User not found."
-            })
-        }
-    });
-}
+
 
 
 export function insertUserIntoCollection (user: IUserData) {
