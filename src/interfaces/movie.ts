@@ -1,7 +1,7 @@
 import {Schema, Types} from "mongoose";
 
 export interface IMovie {
-    _id: Schema.Types.ObjectId;
+    _id?: Types.ObjectId;
     adult: boolean;
     backdropPath: string;
     title: string;
