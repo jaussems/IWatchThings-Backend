@@ -1,11 +1,11 @@
-import {Schema, Types} from "mongoose";
+import {Types} from "mongoose";
 
 export interface IUserData {
     _id:      Types.ObjectId;
     email:    string;
     password: string;
     otp:      number;
-    movies:   Schema.Types.ObjectId[];
+    movies:   Types.ObjectId[];
     verified: Verified;
 }
 
