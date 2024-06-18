@@ -2,6 +2,7 @@ import {Schema, Types} from "mongoose";
 
 export interface IMovie {
     _id?: Types.ObjectId;
+    id: number,
     adult: boolean;
     backdropPath: string;
     title: string;

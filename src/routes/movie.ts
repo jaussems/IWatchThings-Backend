@@ -15,7 +15,7 @@ type RequestBody<T> = Request<{}, {}, T>;
 
 movieRouter.post('/addmovie',  async (request: RequestBody<IRequestBodyMovie>, response:Response) => {
     try {
-                const findMovie = await database.collection('movies').findOne({_id: new ObjectId(request.body.movie._id)})
+                const findMovie = await database.collection('movies').findOne({id: request.body.movie.id});
                 console.log(findMovie);
                 if(!findMovie)
                 {
