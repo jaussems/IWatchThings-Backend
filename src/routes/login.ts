@@ -1,5 +1,6 @@
 import {Request, Response, Router} from "express";
 import {database} from "../services/database";
+import {ObjectId} from "mongodb";
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -33,6 +34,29 @@ loginRouter.post('/login', (request: Request, response: Response ) => {
 
     }
     catch(error){
+        console.log(error);
+        return response.status(500).send(error);
+    }
+})
+
+loginRouter.get("/user-account", (request: Request, response: Response) => {
+    try
+    {
+        console.log(request.body);
+        database.collection('users').findOne({_id: new ObjectId(request.body._id)}).then((user) => {
+        console.log(user);
+        if (!user) {
+            return response.status(401).send({
+                message:"No user found with that id."
+            })
+        }
+        return response.status(200).send({
+            user
+        })
+        });
+    }
+
+    catch(error) {
         console.log(error);
         return response.status(500).send(error);
     }

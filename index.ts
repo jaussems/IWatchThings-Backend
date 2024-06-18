@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from "express";
 import {signUpRouter} from "./src/routes/signup";
 import {loginRouter} from "./src/routes/login";
 import {movieRouter} from "./src/routes/movie";
+import {database} from "./src/services/database";
 
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
