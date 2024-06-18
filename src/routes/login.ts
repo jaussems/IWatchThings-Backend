@@ -1,5 +1,6 @@
-import {Router, Request, Response, response} from "express";
-import {database, usercollection} from "../services/database";
+import {Request, Response, Router} from "express";
+import {database} from "../services/database";
+
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
@@ -25,7 +26,7 @@ loginRouter.post('/login', (request: Request, response: Response ) => {
                     response.status(401).send({ success: false, error: "Wrong password" })
                 } else {
                     const token = jwt.sign({ id: user._id, email: user.email }, SECRET)
-                    response.status(201).send({ success: true, token: token, })
+                    response.status(201).send({ success: true, token: token, id: user._id })
                 }
             }
         });
